@@ -36,10 +36,10 @@ sealed class BusType(
 
     fun calculateDirt(routeDistance: Float) = routeDistance * airDirt
 
-    //assuming the worst case, that all the stops are after last charge
     fun calculateCost(routeDistance: Float, stopsCount: Int): Float =
         chargeCount(routeDistance, stopsCount).let {
-            usage * cost * (it + (routeDistance - it * distance) / distanceStopsIncluded(stopsCount))
+            val distanceLeft = routeDistance - it * distanceStopsIncluded(stopsCount)
+            usage * cost * (it + distanceLeft / distance)
         }
 }
 

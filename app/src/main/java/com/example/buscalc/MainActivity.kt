@@ -31,27 +31,24 @@ class MainActivity : AppCompatActivity() {
 		outputCleanest = output_cleanest
 		viewModel = ViewModelProvider(this).get(BusViewModel::class.java)
 		viewModel.busLiveData.observe(this, Observer {
-			outputCheapest.text = ""
-			outputFastest.text = ""
-			outputCleanest.text = ""
-			it[CHEAPEST]?.run {
-				outputCheapest.text = "Cheapest bus: ${busType.javaClass.simpleName}, \n" +
+			outputCheapest.text = it[CHEAPEST]?.run {
+				"Cheapest bus: ${busType.javaClass.simpleName}, \n" +
 						"cost: ${cost.roundToTwoDecimals()}, \n" +
 						"income: ${income.roundToTwoDecimals()}, \n" +
 						"CO2 used: ${airDirt.roundToTwoDecimals()}"
-			}
-			it[FASTEST]?.run {
-				outputFastest.text = "Fastest bus: ${busType.javaClass.simpleName}, \n" +
+			} ?: ""
+			outputFastest.text = it[FASTEST]?.run {
+				"Fastest bus: ${busType.javaClass.simpleName}, \n" +
 						"cost: ${cost.roundToTwoDecimals()}, \n" +
 						"income: ${income.roundToTwoDecimals()}, \n" +
 						"CO2 used: ${airDirt.roundToTwoDecimals()}"
-			}
-			it[CLEANEST]?.run {
-				outputCleanest.text = "Cleanest bus: ${busType.javaClass.simpleName}, \n" +
+			} ?: ""
+			outputCleanest.text = it[CLEANEST]?.run {
+				"Cleanest bus: ${busType.javaClass.simpleName}, \n" +
 						"cost: ${cost.roundToTwoDecimals()}, \n" +
 						"income: ${income.roundToTwoDecimals()}, \n" +
 						"CO2 used: ${airDirt.roundToTwoDecimals()}"
-			}
+			} ?: ""
 		})
 		distanceInput = input_route_distance
 		stopsInput = input_stops_count
