@@ -1,9 +1,9 @@
 package com.example.buscalc
 
-val electricBus = Electric()
-val dieselBus = Diesel()
-val gasBus = Gas()
-val buses = listOf(electricBus, dieselBus, gasBus)
+private val electricBus = Electric()
+private val dieselBus = Diesel()
+private val gasBus = Gas()
+private val buses = listOf(electricBus, dieselBus, gasBus)
 
 fun calculateBusInfo(routeInfo: RouteInfo): Map<String, BusChoice> {
     val choices = mutableMapOf<String, BusChoice>()
@@ -48,41 +48,23 @@ fun calculateBusInfo(routeInfo: RouteInfo): Map<String, BusChoice> {
     return choices
 }
 
-private fun cheapestBus(routeInfo: RouteInfo): Pair<BusType, Float> {
-    var leastCost: Float? = null
-    var busType: BusType? = null
-    buses.forEach { bus ->
-        bus.calculateCost(routeInfo.distance, routeInfo.stopsCount)
-            .takeIf { leastCost == null || it < leastCost!! }?.let {
-                leastCost = it
-                busType = bus
-            }
-    }
-    return Pair(busType!!, leastCost!!)
-}
+private fun cheapestBus(routeInfo: RouteInfo) = findBusWithMetric(routeInfo, CHEAPEST)
+private fun fastestBus(routeInfo: RouteInfo) = findBusWithMetric(routeInfo, FASTEST)
+private fun cleanestBus(routeInfo: RouteInfo) = findBusWithMetric(routeInfo, CLEANEST)
 
-private fun fastestBus(routeInfo: RouteInfo): Pair<BusType, Float> {
-    var fastest: Float? = null
+private fun findBusWithMetric(routeInfo: RouteInfo, metric: String): Pair<BusType, Float> {
+    var minimum: Float? = null
     var busType: BusType? = null
     buses.forEach { bus ->
-        bus.calculateTime(routeInfo.distance, routeInfo.stopsCount)
-            .takeIf { fastest == null || it < fastest!! }?.let {
-                fastest = it
-                busType = bus
-            }
+        when (metric) {
+            CHEAPEST -> bus.calculateCost(routeInfo.distance, routeInfo.stopsCount)
+            CLEANEST -> bus.calculateDirt(routeInfo.distance)
+            FASTEST -> bus.calculateTime(routeInfo.distance, routeInfo.stopsCount)
+            else -> -1f
+        }.takeIf { minimum == null || it < minimum!! }?.let {
+            minimum = it
+            busType = bus
+        }
     }
-    return Pair(busType!!, fastest!!)
-}
-
-private fun cleanestBus(routeInfo: RouteInfo): Pair<BusType, Float> {
-    var cleanest: Float? = null
-    var busType: BusType? = null
-    buses.forEach { bus ->
-        bus.calculateDirt(routeInfo.distance)
-            .takeIf { cleanest == null || it < cleanest!! }?.let {
-                cleanest = it
-                busType = bus
-            }
-    }
-    return Pair(busType!!, cleanest!!)
+    return Pair(busType!!, minimum!!)
 }

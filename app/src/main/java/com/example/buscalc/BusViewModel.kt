@@ -9,11 +9,10 @@ class BusViewModel : ViewModel() {
     val busLiveData: LiveData<Map<String, BusChoice>> by lazy { _busLiveData }
 
     fun getBusChoices(routeInfo: RouteInfo?) {
-        routeInfo ?: run {
+        _busLiveData.value = calculateBusInfo(routeInfo ?: run {
             _busLiveData.value = mapOf()
             return
-        }
-        _busLiveData.value = calculateBusInfo(routeInfo)
+        })
     }
 
 }
