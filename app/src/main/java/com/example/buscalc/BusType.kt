@@ -37,9 +37,9 @@ sealed class BusType(
     fun calculateDirt(routeDistance: Float) = routeDistance * airDirt
 
     fun calculateCost(routeDistance: Float, stopsCount: Int): Float =
-        chargeCount(routeDistance, stopsCount).let {
-            val distanceLeft = routeDistance - it * distanceStopsIncluded(stopsCount)
-            usage * cost * (it + distanceLeft / distance)
+        chargeCount(routeDistance, stopsCount).let { chargeCount ->
+            val distanceLeft = (routeDistance - chargeCount * distance).takeIf { it > 0 } ?: 0f
+            usage * cost * (chargeCount + distanceLeft / distanceStopsIncluded(stopsCount))
         }
 }
 
